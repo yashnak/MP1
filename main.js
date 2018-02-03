@@ -5,6 +5,12 @@
 //var gl; 
 var canvas; 
 var gl;
+var shaderProgram;
+var vertexPositionBuffer;
+var vertexColorBuffer;
+
+
+
 function createGLContext(canvas) {
     var names = ["webgl", "experimental-webgl"];
     var context = null; 
@@ -69,6 +75,8 @@ function loadShaderFromDOM(id) {
   return shader;
 }
 
+
+
 function setupShaders() {
   vertexShader = loadShaderFromDOM("shader-vs");
   fragmentShader = loadShaderFromDOM("shader-fs");
@@ -89,6 +97,8 @@ function setupShaders() {
   shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
   gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 }
+
+
 
 function setupBuffers() {
   vertexPositionBuffer = gl.createBuffer();
@@ -292,9 +302,13 @@ function draw() {
  function startup() {
     canvas = document.getElementById("illini"); 
     gl = createGLContext(canvas); 
-    gl.clearColor(0.75, 0.85, 0.8, 1.0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    //gl.clearColor(0.75, 0.85, 0.8, 1.0);
+    setupShaders(); 
+    setupBuffers(); 
+    //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.enable(gl.DEPTH_TEST); 
     console.log("hello"); 
+    draw(); 
 
     
 }
