@@ -23,6 +23,8 @@
     attribute vec4 aVertexColor;
     attribute vec3 aVertexPosition;
     varying vec4 vColor;
+    uniform mat4 uPMatrix; 
+
     void main(void) {
     gl_Position = vec4(aVertexPosition, 1.0);
     vColor = aVertexColor;
@@ -36,10 +38,10 @@
     gl_FragColor = vColor;
     }
     </script>
+ 
+    <script src = "gl-matrix-min.js"></script>
+    <script type = "text/javascript" src= "webgl-utils.js"></script>
 
-
-    
-    
 
     <body onload="startup();">
         <canvas id="illini" width = "640" height = "480"></canvas>

@@ -8,6 +8,8 @@ var gl;
 var shaderProgram;
 var vertexPositionBuffer;
 var vertexColorBuffer;
+var pMatrix; 
+
 
 
 
@@ -82,6 +84,14 @@ function setupShaders() {
   fragmentShader = loadShaderFromDOM("shader-fs");
   
   shaderProgram = gl.createProgram();
+    
+  //ORTHO MATRIX
+  shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix"); 
+    
+
+  pMatrix = mat4.create(); 
+  mat4.ortho(pMatrix, 0, 500, 0, 500, 0, 0); 
+  
   gl.attachShader(shaderProgram, vertexShader);
   gl.attachShader(shaderProgram, fragmentShader);
   gl.linkProgram(shaderProgram);
@@ -110,6 +120,16 @@ function setupBuffers() {
     2.0, 15.0, 0.0,
     2.0, 17.0, 0.0,
     15.0, 17.0, 0.0,
+      
+     /*-5.0,  5.0,  0.0,
+    -5.0 ,  0.75,  0.0,
+    -0.5,  -0.75,  0.0,
+        //second triangle 
+    5.0,  -0.75,  0.0,
+    -0.25, -0.5,   0.0,
+    -0.25,  0.75,  0.0*/
+     
+     
     15.0, 17.0, 0.0,
     15.0, 15.0, 0.0,
     2.0, 15.0, 0.0,
@@ -199,9 +219,12 @@ function setupBuffers() {
   vertexColorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
   var colors = [
+        /*0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,
+        0.0, 1.0, 1.0, 1.0,
+        0.0, 1.0, 1.0, 1.0, 
+        0.0, 1.0, 1.0, 1.0*/
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
@@ -305,9 +328,10 @@ function draw() {
     //gl.clearColor(0.75, 0.85, 0.8, 1.0);
     setupShaders(); 
     setupBuffers(); 
-    //gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.enable(gl.DEPTH_TEST); 
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    //gl.enable(gl.DEPTH_TEST); 
     console.log("hello"); 
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
     draw(); 
 
     
