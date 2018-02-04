@@ -85,16 +85,18 @@ function setupShaders() {
   
   shaderProgram = gl.createProgram();
     
+  
+  
+  gl.attachShader(shaderProgram, vertexShader);
+  gl.attachShader(shaderProgram, fragmentShader);
+  gl.linkProgram(shaderProgram);
+    
   //ORTHO MATRIX
   shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix"); 
     
 
   pMatrix = mat4.create(); 
   mat4.ortho(pMatrix, 0, 500, 0, 500, 0, 0); 
-  
-  gl.attachShader(shaderProgram, vertexShader);
-  gl.attachShader(shaderProgram, fragmentShader);
-  gl.linkProgram(shaderProgram);
 
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
     alert("Failed to setup shaders");
@@ -117,20 +119,20 @@ function setupBuffers() {
     //blue
       
     //top rectangle  
-    2.0, 15.0, 0.0,
+    /*2.0, 15.0, 0.0,
     2.0, 17.0, 0.0,
-    15.0, 17.0, 0.0,
+    15.0, 17.0, 0.0,*/
       
-     /*-5.0,  5.0,  0.0,
+     -5.0,  5.0,  0.0,
     -5.0 ,  0.75,  0.0,
     -0.5,  -0.75,  0.0,
         //second triangle 
     5.0,  -0.75,  0.0,
     -0.25, -0.5,   0.0,
-    -0.25,  0.75,  0.0*/
+    -0.25,  0.75,  0.0
      
      
-    15.0, 17.0, 0.0,
+    /*15.0, 17.0, 0.0,
     15.0, 15.0, 0.0,
     2.0, 15.0, 0.0,
       
@@ -207,25 +209,25 @@ function setupBuffers() {
     14.0, 6.0, 0.0,
     13.0, 4.0, 0.0,
     14.0, 6.0, 0.0,
-    13.0, 6.0, 0.0
+    13.0, 6.0, 0.0*/
 
           
   ];
     
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
   vertexPositionBuffer.itemSize = 3;
-  vertexPositionBuffer.numberOfItems = 66;
+  vertexPositionBuffer.numberOfItems = 6;
     
   vertexColorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
   var colors = [
-        /*0.0, 0.0, 1.0, 1.0,
+        0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
         0.0, 1.0, 1.0, 1.0,
         0.0, 1.0, 1.0, 1.0, 
-        0.0, 1.0, 1.0, 1.0*/
-        0.0, 0.0, 1.0, 1.0,
+        0.0, 1.0, 1.0, 1.0
+        /*0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
@@ -300,13 +302,13 @@ function setupBuffers() {
         1.0, 0.0, 0.0, 1.0,
         1.0, 0.0, 0.0, 1.0,
         1.0, 0.0, 0.0, 1.0,
-        1.0, 0.0, 0.0, 1.0
+        1.0, 0.0, 0.0, 1.0*/
         
         
     ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
   vertexColorBuffer.itemSize = 4;
-  vertexColorBuffer.numItems = 66;  
+  vertexColorBuffer.numItems = 6;  
 }
 
 function draw() { 
