@@ -16,28 +16,35 @@
 <html>
     <head> 
         <title>mp1 </title>
-        <script src="main.js"></script>
     </head>
     
+    <script src = "gl-matrix-min.js"></script>
+    <script type = "text/javascript" src= "webgl-utils.js"></script>
+    <script src="main.js"></script>
+
     <script id="shader-vs" type="x-shader/x-vertex">
     attribute vec4 aVertexColor;
     attribute vec3 aVertexPosition;
     uniform vec2 u_resolution;
     uniform mat3 u_matrix;
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+
     varying vec4 vColor;
 
     void main(void) {
 
     vec2 position = aVertexPosition.xy;
     //convert the position from pixels to 0.0 to 1.0-->
-    //vec2 zeroToOne = position / u_resolution;
-    vec2 zeroToOne = position * vec2(0.02, 0.02);
+    vec2 zeroToOne = position / u_resolution;
+    //vec2 zeroToOne = position * vec2(0.02, 0.02);
     //convert from 0->1 to 0->2
     
     vec2 zeroToTwo = zeroToOne * 2.0;
     // convert from 0->2 to -1->+1 (clipspace)
     vec2 clipSpace = zeroToTwo - 1.0;
-    gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+    gl_Position = uPMatrix*uMVMatrix*vec4(clipSpace + 0.5, 0, 1);
 
     //gl_Position = uPMatrix * vec4(aVertexPosition, 1.0);
     //gl_Position = vec4(aVertexPosition, 1.0);
@@ -54,12 +61,10 @@
     }
     </script>
  
-    <script src = "gl-matrix-min.js"></script>
-    <script type = "text/javascript" src= "webgl-utils.js"></script>
 
 
     <body onload="startup();">
-        <canvas id="illini" width = "640" height = "480"></canvas>
+        <canvas id="illini" width = "480" height = "480"></canvas>
         <br />
         <b> where are you </b>
     </body>

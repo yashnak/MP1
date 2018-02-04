@@ -8,7 +8,16 @@ var gl;
 var shaderProgram;
 var vertexPositionBuffer;
 var vertexColorBuffer;
-var pMatrix; 
+var pMatrix = mat4.create(); 
+var mvMatrix = mat4.create();
+var orangeWiggle = 0; 
+
+var lastTime = 0;
+var rotAngle = 0;
+var orangeRotAngle = 0; 
+var transformVec = vec3.create();    
+vec3.set(transformVec,0.0,0.0,-2.0);
+
 
 
 
@@ -108,13 +117,15 @@ function setupShaders() {
   }
 
   gl.useProgram(shaderProgram);
-  gl.uniform2f(resolutionUniformLocation, gl.canvas.width,gl.canvas.height);
+  gl.uniform2f(resolutionUniformLocation, 32, 32);
 
   shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
   shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
   gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+    
+  
 }
 
 
@@ -128,21 +139,13 @@ function setupBuffers() {
     //top rectangle  
     2.0, 15.0, 0.0,
     2.0, 17.0, 0.0,
-    15.0, 17.0, 0.0,
-      
-     //-5.0,  5.0,  0.0,
-    //-5.0 ,  0.75,  0.0,
-    //-0.5,  -0.75,  0.0,
-        //second triangle 
-   
-     
-     
+    15.0, 17.0, 0.0,    
     15.0, 17.0, 0.0,
     15.0, 15.0, 0.0,
     2.0, 15.0, 0.0,
       
     //left rect
-    3.0, 7,0, 0.0,
+    3.0, 7.0, 0.0,
     3.0, 15.0, 0.0,
     6.0, 7.0, 0.0,
     3.0, 15.0, 0.0,
@@ -174,10 +177,10 @@ function setupBuffers() {
     10.0, 13.0, 0.0,
       
     //orange
-    3.0, 5.0, 0.0,
-    3.0, 6.0, 0.0,
-    4.0, 6.0, 0.0,
-    3.0, 5.0, 0.0,
+    3.0*Math.cos(orangeRotAngle), 5.0 *Math.cos(orangeRotAngle), 0.0,
+    3.0 *Math.cos(orangeRotAngle), 6.0 *Math.cos(orangeRotAngle), 0.0,
+    4.0 , 6.0, 0.0,
+    3.0*Math.cos(orangeRotAngle), 5.0 *Math.cos(orangeRotAngle), 0.0,
     4.0, 6.0, 0.0,
     4.0, 4.0, 0.0,
       
@@ -202,7 +205,7 @@ function setupBuffers() {
     10.0, 6.0, 0.0,
     9.0, 6.0, 0.0,
       
-    11.0, 3.0, 0.0,
+    11.0 , 3.0, 0.0,
     12.0, 4.0, 0.0,
     12.0, 6.0, 0.0,
     11.0, 3.0, 0.0,
@@ -226,12 +229,7 @@ function setupBuffers() {
   vertexColorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
   var colors = [
-        0.0, 0.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 1.0,
+    
       
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
@@ -319,7 +317,17 @@ function setupBuffers() {
 
 function draw() { 
   gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);  
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    
+  mat4.identity(pMatrix);
+  mat4.identity(mvMatrix);
+
+
+  mat4.ortho(pMatrix,-1,1,-1,1,1,-1);
+  vec3.set(transformVec,0.0,0.0,0.0);
+  mat4.translate(mvMatrix, mvMatrix,transformVec);   
+  mat4.rotateX(mvMatrix, mvMatrix, degToRad(rotAngle));  
+
     
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 
@@ -329,7 +337,26 @@ function draw() {
   gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 
                             vertexColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
     
+  shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+  shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
+    
+  setMatrixUniforms();
+  setupBuffers(); 
+
+    
   gl.drawArrays(gl.TRIANGLES, 0, vertexPositionBuffer.numberOfItems);
+}
+
+function animate() {
+    var timeNow = new Date().getTime();
+    if (lastTime != 0) {
+        var elapsed = timeNow - lastTime;    
+        rotAngle= (rotAngle+1.0) % 360;
+        orangeRotAngle = (orangeRotAngle + 0.01) % 360; 
+        
+        orangeWiggle = orangeWiggle + 0.3 * (Math.random() - 0.5); 
+    }
+    lastTime = timeNow;
 }
 
 
@@ -343,11 +370,26 @@ function draw() {
     //gl.enable(gl.DEPTH_TEST); 
     console.log("hello"); 
     gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
-    draw(); 
+    tick(); 
 
     
 }
 
+function tick() {
+    requestAnimFrame(tick);
+    draw();
+    animate();
+}
+
+function degToRad(degrees) {
+        return degrees * Math.PI / 180;
+}
+
+
+function setMatrixUniforms() {
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+}
 
 
 
