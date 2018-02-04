@@ -26,8 +26,11 @@
     uniform mat4 uPMatrix; 
 
     void main(void) {
-    gl_Position = uPMatrix * vec4(aVertexPosition, 1.0);
+    
+    vec2 position = aVertexPosition.xy +0.9;
+    gl_Position = vec4(position, 0.0, 1.0);
     vColor = aVertexColor;
+    
     }
     </script>
   

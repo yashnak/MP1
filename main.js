@@ -127,9 +127,7 @@ function setupBuffers() {
     -5.0 ,  0.75,  0.0,
     -0.5,  -0.75,  0.0,
         //second triangle 
-    5.0,  -0.75,  0.0,
-    -0.25, -0.5,   0.0,
-    -0.25,  0.75,  0.0
+   
      
      
     /*15.0, 17.0, 0.0,
@@ -216,7 +214,7 @@ function setupBuffers() {
     
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices), gl.STATIC_DRAW);
   vertexPositionBuffer.itemSize = 3;
-  vertexPositionBuffer.numberOfItems = 6;
+  vertexPositionBuffer.numberOfItems = 3;
     
   vertexColorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
@@ -224,9 +222,7 @@ function setupBuffers() {
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
-        0.0, 1.0, 1.0, 1.0,
-        0.0, 1.0, 1.0, 1.0, 
-        0.0, 1.0, 1.0, 1.0
+      
         /*0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
         0.0, 0.0, 1.0, 1.0,
@@ -308,7 +304,7 @@ function setupBuffers() {
     ];
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
   vertexColorBuffer.itemSize = 4;
-  vertexColorBuffer.numItems = 6;  
+  vertexColorBuffer.numItems = 3;  
 }
 
 function draw() { 
